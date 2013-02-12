@@ -3,11 +3,10 @@
 import sys
 import getopt
 
+import Globales
 from Requester import Requester
 from MtGoxRequester import MtGoxRequester
 
-global _verbose
-_verbose = 0
 
 class BTCTrader:
     def ExitUsage(self, error=0, msg=""):
@@ -28,12 +27,12 @@ class BTCTrader:
         try:
             opts, args = getopt.getopt(argv, "hv", ["help", "verbose", "api=", "authId=", "authPass="])
         except getopt.GetoptError:
-            BTCTrader.ExitUsage(self, 1, "Bad arguments.")
+            self.ExitUsage(1, "Bad arguments.")
         for opt, arg in opts:
             if opt in ("-h", "--help"):
-                BTCTrader.ExitUsage(self)
+                self.ExitUsage()
             elif opt in ("-v", "--verbose"):
-                _verbose = 1
+                Globales.verbose = 1
             elif opt == "--api":
                 self.api = arg
             elif opt == "--authId":
@@ -41,12 +40,7 @@ class BTCTrader:
             elif opt == "--authPass":
                 self.authPass = arg
         if self.api not in ("mtgox", "bitcoin-central") or len(self.authId) == 0 or len(self.authPass) == 0:
-            BTCTrader.ExitUsage(self, 1, "Bad arguments.")
-
-    def Run(self):
-        req = BTCTrader.CreateRequester(self)
-        res = Requester.Perform(req, "generic/private/info", {})
-        print(res)
+            self.ExitUsage(1, "Bad arguments.")
 
     def CreateRequester(self):
         if (self.api == "mtgox"):
@@ -55,6 +49,15 @@ class BTCTrader:
             print("please implement me :'(")
             sys.exit()
 
+    def Run(self):
+        try:
+            req = self.CreateRequester()
+            account = req.GetAccount()
+            print(account)
+        except:
+            print("Unexpected error: ")
+            print(sys.exc_info())
+
 
 trader = BTCTrader(sys.argv[1:])
-BTCTrader.Run(trader)
+trader.Run()
