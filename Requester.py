@@ -17,7 +17,7 @@ class Requester:
             print(data)
             print(headers)
         req = urllib2.Request(self._apiUri + url, data, headers)
-        res = urllib2.urlopen(req, data)
+        res = urllib2.urlopen(req)
         jsonResponse = json.load(res)
         if Globales.verbose == 1:
             print("Response:")

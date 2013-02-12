@@ -30,13 +30,21 @@ class MtGoxRequester(Requester):
         headers["Rest-Sign"] = self.SignData(self._authSecret, postData)
         return (postData, headers)
 
-    def GetAccount(self):
-        res = self.Perform("/generic/private/info", {})
+    def Perform(self, url, args):
+        res = Requester.Perform(self, url, args)
         if res["result"] != "success":
             raise Exception("Request failed.")
+        return res
+
+    def GetAccount(self):
+        # get account infos
+        res = self.Perform("/generic/private/info", {})
         result = res["return"]
         a = Account()
         a.tradeFee = result["Trade_Fee"]
         a.wallets["BTC"] = result["Wallets"]["BTC"]["Balance"]["value"]
         a.wallets["EUR"] = result["Wallets"]["EUR"]["Balance"]["value"]
+        # get btc address
+        res = self.Perform("/generic/bitcoin/address", {})
+        #a.address = result
         return a
