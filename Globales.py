@@ -1,2 +1,2 @@
 
-verbose = 0
+verbose = 1

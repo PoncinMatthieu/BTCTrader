@@ -1,6 +1,6 @@
 
-import urllib2
 import json
+import urllib
 
 import Globales
 
@@ -16,8 +16,8 @@ class Requester:
             print(self._apiUri + url)
             print(data)
             print(headers)
-        req = urllib2.Request(self._apiUri + url, data, headers)
-        res = urllib2.urlopen(req)
+        req = urllib.request.Request(self._apiUri + url, data.encode('ascii'), headers)
+        res = urllib.request.urlopen(req)
         jsonResponse = json.load(res)
         if Globales.verbose == 1:
             print("Response:")

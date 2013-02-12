@@ -3,7 +3,7 @@ import time
 from hashlib import sha512
 from hmac import HMAC
 import base64
-from urllib import urlencode
+import urllib
 
 from Requester import Requester
 from Account import Account
@@ -23,7 +23,7 @@ class MtGoxRequester(Requester):
 
     def BuildQuery(self, req={}):
         req["nonce"] = self.GetNonce()
-        postData = urlencode(req)
+        postData = urllib.parse.urlencode(req)
         headers = {}
         headers["User-Agent"] = "GoxApi"
         headers["Rest-Key"] = self._authKey

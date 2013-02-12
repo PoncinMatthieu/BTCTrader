@@ -13,7 +13,7 @@ class Market:
         if (self.apiName == "mtgox"):
             return MtGoxRequester(authId, authPass)
         elif (self.apiName == "bitcoin-central"):
-            print("please implement me :'(")
+            return BitcoinCentralRequester(authId, authPass)
         raise Exception("Unknown Market.")
 
     def Init(self):

@@ -4,6 +4,10 @@ import sys
 import getopt
 
 import Globales
+
+from Requester import Requester
+from MtGoxRequester import MtGoxRequester
+from BitcoinCentralRequester import BitcoinCentralRequester
 from Market import Market
 
 class BTCTrader:
@@ -41,13 +45,9 @@ class BTCTrader:
                     self.ExitUsage(1, "Bad arguments. Failed to open the markets description file.")
 
     def Run(self):
-        try:
-            for m in self.markets.iteritems():
-                m[1].Init()
-                print(m[1].account)
-        except:
-            print("Unexpected error: ")
-            print(sys.exc_info())
+        for m in self.markets.items():
+            m[1].Init()
+            print(m[1].account)
 
 
 trader = BTCTrader(sys.argv[1:])
