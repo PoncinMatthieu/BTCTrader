@@ -46,5 +46,6 @@ class MtGoxRequester(Requester):
         a.wallets["EUR"] = result["Wallets"]["EUR"]["Balance"]["value"]
         # get btc address
         res = self.Perform("/generic/bitcoin/address", {})
-        #a.address = result
+        a.btcAddress = res["return"]["addr"];
         return a
+
