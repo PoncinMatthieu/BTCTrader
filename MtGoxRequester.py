@@ -12,8 +12,8 @@ from Account import Account
 class MtGoxRequester(Requester):
     def __init__(self, authId, authPass):
         Requester.__init__(self, "https://mtgox.com/api/1")
-        self.authKey = authId
-        self.authSecret = base64.b64decode(authPass)
+        self._authKey = authId
+        self._authSecret = base64.b64decode(authPass)
 
     def GetNonce(self):
         return int(time.time()*100000)
@@ -26,8 +26,8 @@ class MtGoxRequester(Requester):
         postData = urlencode(req)
         headers = {}
         headers["User-Agent"] = "GoxApi"
-        headers["Rest-Key"] = self.authKey
-        headers["Rest-Sign"] = self.SignData(self.authSecret, postData)
+        headers["Rest-Key"] = self._authKey
+        headers["Rest-Sign"] = self.SignData(self._authSecret, postData)
         return (postData, headers)
 
     def GetAccount(self):
