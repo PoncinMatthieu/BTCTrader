@@ -6,7 +6,7 @@ import getopt
 import Globales
 from Requester import Requester
 from MtGoxRequester import MtGoxRequester
-
+from BitcoinCentralRequester import BitcoinCentralRequester
 
 class BTCTrader:
     def ExitUsage(self, error=0, msg=""):
@@ -46,17 +46,17 @@ class BTCTrader:
         if (self.api == "mtgox"):
             return MtGoxRequester(self.authId, self.authPass)
         elif (self.api == "bitcoin-central"):
-            print("please implement me :'(")
-            sys.exit()
+            return BitcoinCentralRequester(self.authId, self.authPass)
+        sys.exit(0)
 
     def Run(self):
-        try:
-            req = self.CreateRequester()
-            account = req.GetAccount()
-            print(account)
-        except:
-            print("Unexpected error: ")
-            print(sys.exc_info())
+#        try:
+        req = self.CreateRequester()
+        account = req.GetAccount()
+        print(account)
+#        except:
+#            print("Unexpected error: ")
+#            print(sys.exc_info())
 
 
 trader = BTCTrader(sys.argv[1:])
