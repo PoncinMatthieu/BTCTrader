@@ -4,28 +4,28 @@ import sys
 import getopt
 
 import Globales
+
 from Requester import Requester
 from MtGoxRequester import MtGoxRequester
 from BitcoinCentralRequester import BitcoinCentralRequester
+from Market import Market
 
 class BTCTrader:
     def ExitUsage(self, error=0, msg=""):
         if error != 0:
             print("Error: " + msg)
-        print("usage: ./BTCTrader.py [OPTION] --api=[mtgox|bitcoin-central] --authId=[ID] --authPass=[PASS]")
+        print("usage: ./BTCTrader.py [OPTION] --markets=[MARKET_FILE_DESCRIPTION]")
         print("OPTION:")
-        print("\t-h, --help: print usage")
-        print("\t-v, --verbose: verbose mode")
+        print("\t-h, --help: print usage.")
+        print("\t-v, --verbose: verbose mode.")
         sys.exit(error)
 
     # constructor, here we take care of the arguments.
     # print the usage if something is wrong
     def __init__(self, argv):
-        self.api = ""
-        self.authId = ""
-        self.authPass = ""
+        self.markets = {}
         try:
-            opts, args = getopt.getopt(argv, "hv", ["help", "verbose", "api=", "authId=", "authPass="])
+            opts, args = getopt.getopt(argv, "hv", ["help", "verbose", "markets="])
         except getopt.GetoptError:
             self.ExitUsage(1, "Bad arguments.")
         for opt, arg in opts:
@@ -33,30 +33,21 @@ class BTCTrader:
                 self.ExitUsage()
             elif opt in ("-v", "--verbose"):
                 Globales.verbose = 1
-            elif opt == "--api":
-                self.api = arg
-            elif opt == "--authId":
-                self.authId = arg
-            elif opt == "--authPass":
-                self.authPass = arg
-        if self.api not in ("mtgox", "bitcoin-central") or len(self.authId) == 0 or len(self.authPass) == 0:
-            self.ExitUsage(1, "Bad arguments.")
-
-    def CreateRequester(self):
-        if (self.api == "mtgox"):
-            return MtGoxRequester(self.authId, self.authPass)
-        elif (self.api == "bitcoin-central"):
-            return BitcoinCentralRequester(self.authId, self.authPass)
-        sys.exit(0)
+            elif opt == "--markets":
+                self.marketFile = arg
+                try:
+                    f = open(self.marketFile, "r")
+                    for line in f:
+                        infos = line.partition(" ")
+                        infos2 = infos[2].partition(" ")
+                        self.markets[infos[0]] = Market(infos[0], infos2[0], infos2[2])
+                except IOError as e:
+                    self.ExitUsage(1, "Bad arguments. Failed to open the markets description file.")
 
     def Run(self):
-#        try:
-        req = self.CreateRequester()
-        account = req.GetAccount()
-        print(account)
-#        except:
-#            print("Unexpected error: ")
-#            print(sys.exc_info())
+        for m in self.markets.items():
+            m[1].Init()
+            print(m[1].account)
 
 
 trader = BTCTrader(sys.argv[1:])
