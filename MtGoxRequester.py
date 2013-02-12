@@ -13,13 +13,13 @@ class MtGoxRequester(Requester):
     def __init__(self, authId, authPass):
         Requester.__init__(self, "https://mtgox.com/api/1")
         self._authKey = authId
-        self._authSecret = base64.b64decode(authPass)
+        self._authSecret = base64.b64decode(authPass.encode())
 
     def GetNonce(self):
         return int(time.time()*100000)
 
     def SignData(self, secret, data):
-        return base64.b64encode(str(HMAC(secret, data, sha512).digest()))
+        return base64.b64encode(HMAC(secret, data.encode(), sha512).digest())
 
     def BuildQuery(self, req={}):
         req["nonce"] = self.GetNonce()

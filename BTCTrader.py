@@ -2,6 +2,7 @@
 
 import sys
 import getopt
+import traceback
 
 import Globales
 
@@ -45,9 +46,12 @@ class BTCTrader:
                     self.ExitUsage(1, "Bad arguments. Failed to open the markets description file.")
 
     def Run(self):
-        for m in self.markets.items():
-            m[1].Init()
-            print(m[1].account)
+        try:
+            for m in self.markets.items():
+                m[1].Init()
+                print(m[1].account)
+        except:
+            print(traceback.format_exc())
 
 
 trader = BTCTrader(sys.argv[1:])
