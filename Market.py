@@ -7,9 +7,7 @@ from MtGoxRequester import MtGoxRequester
 class Market:
     def __init__(self, apiName, authId, authPass):
         self.apiName = apiName
-        req = self.CreateRequester(authId, authPass)
-        account = req.GetAccount()
-        print(account)
+        self.req = self.CreateRequester(authId, authPass)
 
     def CreateRequester(self, authId, authPass):
         if (self.apiName == "mtgox"):
@@ -18,3 +16,5 @@ class Market:
             print("please implement me :'(")
         raise Exception("Unknown Market.")
 
+    def Init(self):
+        self.account = self.req.GetAccount()
