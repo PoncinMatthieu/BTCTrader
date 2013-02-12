@@ -39,9 +39,9 @@ class BTCTrader:
                 try:
                     f = open(self.marketFile, "r")
                     for line in f:
-                        infos = line.partition(" ")
-                        infos2 = infos[2].partition(" ")
-                        self.markets[infos[0]] = Market(infos[0], infos2[0], infos2[2])
+                        infos = line.split()
+                        if infos[0][0] != '#':
+                            self.markets[infos[0]] = Market(infos[0], infos[1], infos[2])
                 except IOError as e:
                     self.ExitUsage(1, "Bad arguments. Failed to open the markets description file.")
 

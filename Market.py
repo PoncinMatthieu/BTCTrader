@@ -3,6 +3,7 @@
 import Globales
 from Requester import Requester
 from MtGoxRequester import MtGoxRequester
+from BitcoinCentralRequester import BitcoinCentralRequester
 
 class Market:
     def __init__(self, apiName, authId, authPass):
