@@ -4,9 +4,7 @@ import sys
 import getopt
 
 import Globales
-from Requester import Requester
-from MtGoxRequester import MtGoxRequester
-
+from Market import Market
 
 class BTCTrader:
     def ExitUsage(self, error=0, msg=""):
@@ -42,18 +40,9 @@ class BTCTrader:
         if self.api not in ("mtgox", "bitcoin-central") or len(self.authId) == 0 or len(self.authPass) == 0:
             self.ExitUsage(1, "Bad arguments.")
 
-    def CreateRequester(self):
-        if (self.api == "mtgox"):
-            return MtGoxRequester(self.authId, self.authPass)
-        elif (self.api == "bitcoin-central"):
-            print("please implement me :'(")
-            sys.exit()
-
     def Run(self):
         try:
-            req = self.CreateRequester()
-            account = req.GetAccount()
-            print(account)
+            m = Market(self.api, self.authId, self.authPass)
         except:
             print("Unexpected error: ")
             print(sys.exc_info())
