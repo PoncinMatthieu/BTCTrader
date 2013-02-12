@@ -19,7 +19,7 @@ class MtGoxRequester(Requester):
         return int(time.time()*100000)
 
     def SignData(self, secret, data):
-        return base64.b64encode(str(HMAC(secret, data, sha512).digest()))
+        return base64.b64encode(HMAC(secret, data.encode(), sha512).digest())
 
     def BuildQuery(self, req={}):
         req["nonce"] = self.GetNonce()
