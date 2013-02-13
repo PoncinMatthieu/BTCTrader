@@ -3,7 +3,7 @@
 import sys
 import getopt
 import traceback
-import time
+import threading
 
 import Globales
 
@@ -53,28 +53,26 @@ class BTCTrader:
         if marketFileDefined == 0:
             self.ExitUsage(1, "Bad arguments. Please define a markets description file.")
 
-    def Run(self):
-        for m in self.markets.items():
-            m[1].Refresh()
-        # for now we simply update informations every 60 seconds and process the informations
-        while 1:
-            try:
-                for m in self.markets.items():
-                    m[1].Update()
-                    self.Process()
-                    time.sleep(60)
-            # manage interupt ctrl-c, to quit the bot properly
-            # cleanup and quit
-            except (KeyboardInterrupt, SystemExit):
-                sys.exit()
-            # if something goes wrong, print the backtrace and contunue
-            except:
-                print(traceback.format_exc())
+    # recursive method to catch ctrl-c
+    def Join(self, threads):
+        try:
+            for t in threads:
+                t.join()
+        # manage interupt ctrl-c, to quit the bot properly
+        # cleanup and quit
+        except (KeyboardInterrupt, SystemExit):
+            print("Terminating bot.")
+            Globales.stopBot = 1
+            self.Join(threads)
 
-    # for now only print informations from the market
-    def Process(self):
+    # launch market threads
+    def Run(self):
+        threads = []
         for m in self.markets.items():
-            print(m[1])
+            t = threading.Thread(target=m[1].Run, args=[])
+            t.start()
+            threads.append(t)
+        self.Join(threads)
 
 trader = BTCTrader(sys.argv[1:])
 trader.Run()
