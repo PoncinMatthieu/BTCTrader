@@ -16,7 +16,9 @@ class Requester:
             print(self._apiUri + url)
             print(data)
             print(headers)
-        req = urllib.request.Request(self._apiUri + url, data.encode('ascii'), headers)
+        if data != None:
+            data = data.encode('ascii')
+        req = urllib.request.Request(self._apiUri + url, data, headers)
         res = urllib.request.urlopen(req)
         encoding = res.headers.get_content_charset()
         body = res.read().decode(encoding)

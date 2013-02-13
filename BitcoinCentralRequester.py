@@ -23,7 +23,7 @@ class BitcoinCentralRequester(Requester):
         postData = urllib.parse.urlencode(reqs)
         headers["Content-Type"] = 'application/json'
         headers["Authorization"] = 'Basic ' + self.authHttpBase64.decode('ascii')
-        return (postData, headers)
+        return (None, headers)
 
         
     def GetAccount(self):
@@ -33,6 +33,9 @@ class BitcoinCentralRequester(Requester):
         #it should change soon
         #now I only get the current balance
         res = self.Perform("account_operations", {})
-        print(res)
-        a = Account()
-        return a
+        account = Account()
+        account.tradeFee = 0.498        
+        for i in res:
+            if not i['currency'] in account.wallets:
+                account.wallets[i['currency']] = i['balance']
+        return account
