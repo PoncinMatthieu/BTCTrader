@@ -26,9 +26,12 @@ class Market:
     def __str__(self):
         s = "Market: " + self.apiName + "\n"
         s += str(self.account)
+        for d in self.depth.items():
+            s += str(d[1])
         return s
 
-    # Refresh informations that are not supposed to change often like the account balance
+    # Refresh personal informations,
+    # those informations are not supposed to change if the bot does not perform any action
     def Refresh(self):
         self.account = self.req.GetAccount()
 

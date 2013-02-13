@@ -7,6 +7,7 @@ import urllib
 
 from Requester import Requester
 from Account import Account
+from Depth import Depth
 
 # Manage every requests to MtGox API
 class MtGoxRequester(Requester):
@@ -14,7 +15,9 @@ class MtGoxRequester(Requester):
         Requester.__init__(self, "https://mtgox.com/api/1")
         self._authKey = authId
         self._authSecret = base64.b64decode(authPass.encode())
-        self._availableCurrencies = {"USD", "EUR", "JPY", "CAD", "GBP", "CHF", "RUB", "AUD", "SEK", "DKK", "HKD", "PLN", "CNY", "SGD", "THB", "NZD", "NOK"}
+        # for now, we will manage only EUR.
+        #self._availableCurrencies = {"USD", "EUR", "JPY", "CAD", "GBP", "CHF", "RUB", "AUD", "SEK", "DKK", "HKD", "PLN", "CNY", "SGD", "THB", "NZD", "NOK"}
+        self._availableCurrencies = {"EUR"}
 
     def GetNonce(self):
         return int(time.time()*100000)
@@ -57,10 +60,10 @@ class MtGoxRequester(Requester):
             res = res["return"]
             bids = res["bids"]
             asks = res["asks"]
+            currentDepth = depth[currency] = Depth(currency)
             for bid in bids:
-                print(bid)
+                currentDepth.bids.append([bid["stamp"], bid["amount"], bid["price"]])
+            for ask in asks:
+                currentDepth.asks.append([ask["stamp"], ask["amount"], ask["price"]])
 
-            #print(currency)
-            #print(bids)
-            #print(asks)
 
