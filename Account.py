@@ -6,7 +6,8 @@ class Account:
     wallets = {}
 
     def __str__(self):
-        s = "BtcAddress: " + self.btcAddress + "\n"
+        s = "Account:\n"
+        s += "BtcAddress: " + self.btcAddress + "\n"
         s += "TradeFee: " + str(self.tradeFee) + "\n"
         s += "Wallets: " + str(self.wallets) + "\n"
         return s
