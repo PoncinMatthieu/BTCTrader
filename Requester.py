@@ -8,9 +8,9 @@ class Requester:
     def __init__(self, apiUri):
         self._apiUri = apiUri
 
-    def Perform(self, url, args):
+    def Perform(self, url, args, withAuth):
         global _verbose
-        data, headers = self.BuildQuery(args)
+        data, headers = self.BuildQuery(args, withAuth)
         if Globales.verbose == 1:
             print("Sending request:")
             print(self._apiUri + url)
@@ -26,9 +26,11 @@ class Requester:
             print(jsonResponse)
         return jsonResponse
 
-    def BuildQuery(self, req={}):
+    def BuildQuery(self, req={}, withAuth=0):
         print("Method to redefine !")
 
     def GetAccount(self):
         print("Method to redefine !")
 
+    def UpdateDepth(self, depth):
+        print("Method to redefine !")
