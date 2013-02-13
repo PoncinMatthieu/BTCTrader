@@ -39,3 +39,9 @@ class BitcoinCentralRequester(Requester):
             if not i['currency'] in account.wallets:
                 account.wallets[i['currency']] = i['balance']
         return account
+
+
+    def UpdateDepth(self, depth):
+        #there is no way yet to get the depth for now
+        pass
+
