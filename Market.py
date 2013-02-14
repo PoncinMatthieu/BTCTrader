@@ -44,10 +44,8 @@ class Market(Engine):
     def Update(self):
         self.req.UpdateDepth(self.depth)
 
-    # infinit loop running the market trading algorithm
-    def Run(self):
+    def Initialize(self):
         self.Refresh()
-        Engine.Run(self)
 
     # for now we only update and print the market infos every 60 seconds
     def Execute(self, elapsedTime):
@@ -56,3 +54,6 @@ class Market(Engine):
             self.Update()
             self.clock.Reset()
             print(self)
+
+    def CleanUp(self):
+        i = 0 # do nothing
