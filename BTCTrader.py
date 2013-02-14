@@ -11,6 +11,7 @@ from Requester import Requester
 from MtGoxRequester import MtGoxRequester
 from BitcoinCentralRequester import BitcoinCentralRequester
 from Market import Market
+from Interface import Interface
 
 class BTCTrader:
     def ExitUsage(self, error=0, msg=""):
@@ -52,6 +53,7 @@ class BTCTrader:
                 Globales.testModeFile = arg
         if marketFileDefined == 0:
             self.ExitUsage(1, "Bad arguments. Please define a markets description file.")
+        self.interface = Interface()
 
     # recursive method to catch ctrl-c
     def Join(self, threads):
@@ -68,10 +70,16 @@ class BTCTrader:
     # launch market threads
     def Run(self):
         threads = []
+        # start market threads
         for m in self.markets.items():
             t = threading.Thread(target=m[1].Run, args=[])
             t.start()
             threads.append(t)
+        # start interface thread
+        t = threading.Thread(target=self.interface.Run, args=[])
+        t.start()
+        threads.append(t)
+        # wait for it
         self.Join(threads)
 
 trader = BTCTrader(sys.argv[1:])
