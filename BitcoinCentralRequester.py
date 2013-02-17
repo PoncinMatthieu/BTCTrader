@@ -18,23 +18,23 @@ class BitcoinCentralRequester(Requester):
         concat = authId + ':' + authPass
         self.authHttpBase64 = base64.b64encode(concat.encode())
 
-    def BuildQuery(self, reqs={}):
+    def BuildQuery(self, reqs={}, withAuth=0):
         headers = {}
         postData = urllib.parse.urlencode(reqs)
         headers["Content-Type"] = 'application/json'
-        headers["Authorization"] = 'Basic ' + self.authHttpBase64.decode('ascii')
+        if withAuth == 1:
+            headers["Authorization"] = 'Basic ' + self.authHttpBase64.decode('ascii')
         return (None, headers)
 
-        
     def GetAccount(self):
         #actually, there is no way yet to get informations from
         #the bitcoin-central API but it would be a call to "/me"
         #check the https://bitcoin-central.net/s/api-v1-documentation
         #it should change soon
         #now I only get the current balance
-        res = self.Perform("account_operations", {})
+        res = self.Perform("account_operations", {}, 1)
         account = Account()
-        account.tradeFee = 0.498        
+        account.tradeFee = 0.498
         for i in res:
             if not i['currency'] in account.wallets:
                 account.wallets[i['currency']] = i['balance']

@@ -26,7 +26,7 @@ class BTCTrader:
     # constructor, here we take care of the arguments.
     # print the usage if something is wrong
     def __init__(self, argv):
-        self.markets = {}
+        self.markets = []
         marketFileDefined = 0
         try:
             opts, args = getopt.getopt(argv, "hv", ["help", "verbose", "markets=", "testmode="])
@@ -45,7 +45,7 @@ class BTCTrader:
                     for line in f:
                         infos = line.split()
                         if infos[0][0] != '#':
-                            self.markets[infos[0]] = Market(infos[0], infos[1], infos[2])
+                            self.markets.append(Market(self, infos[0], infos[1], infos[2]))
                 except IOError as e:
                     self.ExitUsage(1, "Bad arguments. Failed to open the markets description file.")
             elif opt == "--testmode":
@@ -53,7 +53,7 @@ class BTCTrader:
                 Globales.testModeFile = arg
         if marketFileDefined == 0:
             self.ExitUsage(1, "Bad arguments. Please define a markets description file.")
-        self.interface = Interface()
+        self.interface = Interface(self)
 
     # recursive method to catch ctrl-c
     def Join(self, threads):
@@ -71,8 +71,8 @@ class BTCTrader:
     def Run(self):
         threads = []
         # start market threads
-        for m in self.markets.items():
-            t = threading.Thread(target=m[1].Run, args=[])
+        for m in self.markets:
+            t = threading.Thread(target=m.Run, args=[])
             t.start()
             threads.append(t)
         # start interface thread
@@ -82,5 +82,7 @@ class BTCTrader:
         # wait for it
         self.Join(threads)
 
+Globales.logFile = open(Globales.logFile, 'w')
 trader = BTCTrader(sys.argv[1:])
 trader.Run()
+Globales.logFile.close()
