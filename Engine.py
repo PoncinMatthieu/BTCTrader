@@ -15,6 +15,7 @@ class Engine:
         self.refreshRate = refreshRate
         self.messages = deque()
         self.messagesMaxNumber = 1000
+        self.newMessages = 1
         self.commands = {}
         self.commands["help"] = Engine.CommandHelp
         self.commandList = deque()
@@ -64,6 +65,7 @@ class Engine:
         s += m
         Globales.Log(self.engineName + " " + s + "\n")
         self.messages.append(s)
+        self.newMessages = 1
 
     def GetDescription(self):
         desc = []

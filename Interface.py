@@ -38,11 +38,13 @@ class Interface(Engine):
         self.command.keypad(1)
         self.RefreshMarketList()
         self.RefreshCommandLine()
+        self.RefreshDescription()
 
     def Execute(self, elapsedTime):
-        self.RefreshMarketList()
-        self.RefreshDescription()
-        self.RefreshConsole()
+        currentEngine = self.GetCurrentEngine()
+        if currentEngine.newMessages == 1:
+            self.RefreshConsoleEngine(currentEngine)
+            currentEngine.newMessages = 0
         self.RefreshCommandLine()
 
     def CleanUp(self):
@@ -70,6 +72,7 @@ class Interface(Engine):
         self.marketList.refresh()
 
     def RefreshDescription(self):
+        self.description.erase()
         self.description.border()
         currentEngine = self.GetCurrentEngine()
         line = 1
@@ -78,17 +81,16 @@ class Interface(Engine):
             line += 1
         self.description.refresh()
 
-    def RefreshConsole(self):
+    def RefreshConsoleEngine(self, e):
         self.console.erase()
         self.console.border()
-        currentEngine = self.GetCurrentEngine()
-        size = len(currentEngine.messages)
+        size = len(e.messages)
         winsize = self.console.getmaxyx()
         line = winsize[0] - size - 1
-        for msg in currentEngine.messages:
+        for msg in e.messages:
             if line > 0:
                 self.console.addstr(line, 1, msg)
-            line += 1
+                line += 1
         self.console.refresh()
 
     def RefreshCommandLine(self):
@@ -103,12 +105,12 @@ class Interface(Engine):
                 self.cursorPosition = 0
             elif c == curses.KEY_NPAGE:
                 self.currentConsole = (self.currentConsole + 1) % (len(self.btcTrader.markets) + 1)
-                self.console.erase()
-                self.description.erase()
+                self.RefreshMarketList()
+                self.RefreshDescription()
             elif c == curses.KEY_PPAGE:
                 self.currentConsole = (self.currentConsole - 1) % (len(self.btcTrader.markets) + 1)
-                self.console.erase()
-                self.description.erase()
+                self.RefreshMarketList()
+                self.RefreshDescription()
             elif c == curses.KEY_BACKSPACE:
                 if self.cursorPosition > 0:
                     self.cursorPosition -= 1
